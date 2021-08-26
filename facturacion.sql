@@ -185,6 +185,26 @@ LOCK TABLES `sucursales` WRITE;
 
 UNLOCK TABLES;
 
+/*Table structure for table `usuarios` */
+
+DROP TABLE IF EXISTS `usuarios`;
+
+CREATE TABLE `usuarios` (
+  `usua_id` int(10) NOT NULL AUTO_INCREMENT,
+  `usua_nomuser` char(50) DEFAULT NULL,
+  `usua_contra` char(50) DEFAULT NULL,
+  `usua_tipo` char(20) DEFAULT NULL,
+  PRIMARY KEY (`usua_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
+
+/*Data for the table `usuarios` */
+
+LOCK TABLES `usuarios` WRITE;
+
+insert  into `usuarios`(`usua_id`,`usua_nomuser`,`usua_contra`,`usua_tipo`) values (1,'admin','1234','administrador');
+
+UNLOCK TABLES;
+
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 /*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;

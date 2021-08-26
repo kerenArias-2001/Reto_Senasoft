@@ -22,7 +22,7 @@
         <div class="collapse navbar-collapse" id="navbarResponsive">
           <ul class="navbar-nav ml-auto">
             <li class="nav-item ">
-              <a class="nav-link" href="index.php">Inicio
+              <a class="nav-link" href="inicio.php">Inicio
                 <span class="sr-only">(current)</span>
               </a>
             </li>

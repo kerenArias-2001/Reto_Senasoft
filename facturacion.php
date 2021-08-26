@@ -295,7 +295,7 @@
           url: 'procesar.php?accion=' + accion + '&codigofactura=' + <?php echo $codigofactura ?>,
           data: cliente,
           success: function(msg) {
-            window.location = 'index.php';
+            window.location = 'inicio.php';
           },
           error: function() {
             alert("Hay un error ..");
@@ -310,7 +310,7 @@
           data: cliente,
           success: function(msg) {
             window.open('pdffactura.php?' + '&codigofactura=' + <?php echo $codigofactura ?>, '_blank');
-            window.location = 'index.php';
+            window.location = 'inicio.php';
           },
           error: function() {
             alert("Hay un error ..");

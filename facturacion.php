@@ -1,339 +1,191 @@
-<!doctype html>
-<html>
-
-<head>
-  <title>Facturación</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <link rel="stylesheet" href="css/bootstrap.min.css">
-  <script src="js/jquery.min.js"></script>
-  <script src="js/popper.min.js"></script>
-  <script src="js/bootstrap.min.js"></script>
-</head>
-
-<body>
-
-  <?php
-  require("conexion.php");
-  $con = retornarConexion();
-  $consulta = mysqli_query($con, "insert into facturas() values ()")
-    or die(mysqli_error($con));
-  $codigofactura = mysqli_insert_id($con);
-  ?>
+/*
+SQLyog Ultimate v11.11 (64 bit)
+MySQL - 5.5.5-10.4.14-MariaDB : Database - facturacion
+*********************************************************************
+*/
 
 
-  <div class="container">
-    <div class="row mt-4">
-      <div class="col-md">
+/*!40101 SET NAMES utf8 */;
 
-        <div class="form-group row">
-          <label for="CodigoFactura" class="col-lg-3 col-form-label">Número de factura:</label>
-          <div class="col-lg-3">
-            <input type="text" disabled class="form-control" id="CodigoFactura" value="<?php echo $codigofactura; ?>">
-          </div>
-        </div>
+/*!40101 SET SQL_MODE=''*/;
 
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+CREATE DATABASE /*!32312 IF NOT EXISTS*/`facturacion` /*!40100 DEFAULT CHARACTER SET utf8mb4 */;
 
-        <div class="form-group row">
-          <label for="Fecha" class="col-lg-3 col-form-label">Fecha de emisión:</label>
-          <div class="col-lg-3">
-            <input type="date" class="form-control" id="Fecha">
-          </div>
-        </div>
+USE `facturacion`;
 
-        <div class="form-group row">
-          <label for="CodigoCliente" class="col-lg-3 col-form-label">Cliente:</label>
-          <div class="col-lg-3">
-            <select class="form-control" id="CodigoCliente">
-              <?php
-              $consulta = mysqli_query($con, "select codigo, nombre from clientes")
-                or die(mysqli_error($con));
+/*Table structure for table `bodega` */
 
-              $clientes = mysqli_fetch_all($consulta, MYSQLI_ASSOC);
+DROP TABLE IF EXISTS `bodega`;
 
-              echo "<option value='0'>Seleccionar Cliente</option>";
-              foreach ($clientes as $cli) {
-                echo "<option value='" . $cli['codigo'] . "'>" . $cli['nombre'] . "</option>";
-              }
-              ?>
-            </select>
-          </div>
-        </div>
+CREATE TABLE `bodega` (
+  `id_bodega` int(20) NOT NULL AUTO_INCREMENT,
+  `direccion_bodega` char(30) DEFAULT NULL,
+  `telefono_bodega` char(20) DEFAULT NULL,
+  `codigo_product` char(20) DEFAULT NULL,
+  `cantitad_product` int(100) DEFAULT NULL,
+  `nombre_product` char(30) DEFAULT NULL,
+  PRIMARY KEY (`id_bodega`),
+  KEY `fk_cod_product` (`codigo_product`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+/*Data for the table `bodega` */
 
-      </div>
-    </div>
+LOCK TABLES `bodega` WRITE;
 
+UNLOCK TABLES;
 
-    <div class="row mt-4">
-      <div class="col-md">
-        <table class="table table-striped">
-          <thead>
-            <tr>
-              <th>Código de Artículo</th>
-              <th>Descripción</th>
-              <th class="text-right">Cantidad</th>
-              <th class="text-right">Precio Unitario</th>
-              <th class="text-right">Total</th>
-              <th class="text-right"></th>
-            </tr>
-          </thead>
-          <tbody id="DetalleFactura">
+/*Table structure for table `categorias` */
 
-          </tbody>
-        </table>
-        <button type="button" id="btnAgregarProducto" class="btn btn-success">Agregar Producto</button>
-        <button type="button" id="btnTerminarFactura" class="btn btn-success">Terminar Factura</button>
-      </div>
-    </div>
+DROP TABLE IF EXISTS `categorias`;
 
-  </div>
+CREATE TABLE `categorias` (
+  `codigo` int(11) NOT NULL AUTO_INCREMENT,
+  `descripcion` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`codigo`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 
+/*Data for the table `categorias` */
 
+LOCK TABLES `categorias` WRITE;
 
-  <!-- ModalProducto(Agregar) -->
-  <div class="modal fade" id="ModalProducto" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
+UNLOCK TABLES;
 
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
+/*Table structure for table `clientes` */
 
-          <div class="form-group">
-            <label>Producto:</label>
-            <select class="form-control" id="CodigoProducto">
-              <?php
-              $consulta = mysqli_query($con, "select codigo, descripcion, precio from productos")
-                or die(mysqli_error($con));
+DROP TABLE IF EXISTS `clientes`;
 
-              $productos = mysqli_fetch_all($consulta, MYSQLI_ASSOC);
-              foreach ($productos as $pro) {
-                echo "<option value='" . $pro['codigo'] . "'>" . $pro['descripcion'] . '  ($' . $pro['precio'] . ")</option>";
-              }
-              ?>
-            </select>
-          </div>
+CREATE TABLE `clientes` (
+  `codigo` int(11) NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(50) DEFAULT NULL,
+  `telefono` varchar(20) DEFAULT NULL,
+  `mail` varchar(70) DEFAULT NULL,
+  `direccion` varchar(70) DEFAULT NULL,
+  PRIMARY KEY (`codigo`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
 
-          <div class="form-row">
-            <div class="form-group col-md-12">
-              <label>Cantidad:</label>
-              <input type="number" id="Cantidad" class="form-control" placeholder="" min="1">
-            </div>
-          </div>
+/*Data for the table `clientes` */
 
+LOCK TABLES `clientes` WRITE;
 
-        </div>
-        <div class="modal-footer">
-          <button type="button" id="btnConfirmarAgregarProducto" class="btn btn-success">Agregar a la factura</button>
-          <button type="button" data-dismiss="modal" class="btn btn-success">Cancelar</button>
-        </div>
-      </div>
-    </div>
-  </div>
+UNLOCK TABLES;
 
+/*Table structure for table `detallefactura` */
 
-  <!-- ModalFinFactura -->
-  <div class="modal fade" id="ModalFinFactura" tabindex="-1" role="dialog">
-    <div class="modal-dialog" style="max-width: 600px" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1>Acciones</h1>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-footer">
-          <button type="button" id="btnConfirmarFactura" class="btn btn-success">Confirmar Factura</button>
-          <button type="button" id="btnConfirmarImprimirFactura" class="btn btn-success">Confirmar e Imprimir Factura</button>
-          <button type="button" id="btnConfirmarDescartarFactura" class="btn btn-success">Descartar la Factura</button>
-        </div>
-      </div>
-    </div>
-  </div>
+DROP TABLE IF EXISTS `detallefactura`;
 
+CREATE TABLE `detallefactura` (
+  `codigo` int(11) NOT NULL AUTO_INCREMENT,
+  `codigofactura` int(11) DEFAULT NULL,
+  `codigoproducto` int(11) DEFAULT NULL,
+  `precio` float DEFAULT NULL,
+  `cantidad` int(11) DEFAULT NULL,
+  `factura` int(11) DEFAULT NULL,
+  PRIMARY KEY (`codigo`),
+  KEY `fk_factura` (`factura`),
+  CONSTRAINT `fk_factura` FOREIGN KEY (`factura`) REFERENCES `facturas` (`codigo`)
+) ENGINE=InnoDB AUTO_INCREMENT=44 DEFAULT CHARSET=latin1;
 
-  <!-- ModalConfirmarBorrar -->
-  <div class="modal fade" id="ModalConfirmarBorrar" tabindex="-1" role="dialog">
-    <div class="modal-dialog" style="max-width: 600px" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1>¿Realmente quiere borrarlo?</h1>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-footer">
-          <button type="button" id="btnConfirmarBorrado" class="btn btn-success">Confirmar</button>
-          <button type="button" data-dismiss="modal" class="btn btn-success">Cancelar</button>
-        </div>
-      </div>
-    </div>
-  </div>
+/*Data for the table `detallefactura` */
 
+LOCK TABLES `detallefactura` WRITE;
 
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
+UNLOCK TABLES;
 
-      var producto;
-      var cliente;
+/*Table structure for table `facturas` */
 
-      document.getElementById('Fecha').valueAsDate = new Date();
+DROP TABLE IF EXISTS `facturas`;
 
-      //Boton que muestra el diálogo de agregar producto
-      $('#btnAgregarProducto').click(function() {
-        LimpiarFormulario();
-        $("#Cantidad").val("1");
-        $("#ModalProducto").modal();
-      });
+CREATE TABLE `facturas` (
+  `codigo` int(11) NOT NULL AUTO_INCREMENT,
+  `fecha` date DEFAULT NULL,
+  `codigocliente` int(11) DEFAULT NULL,
+  PRIMARY KEY (`codigo`),
+  KEY `fk_cliente` (`codigocliente`),
+  CONSTRAINT `fk_cliente` FOREIGN KEY (`codigocliente`) REFERENCES `clientes` (`codigo`)
+) ENGINE=InnoDB AUTO_INCREMENT=51 DEFAULT CHARSET=latin1;
 
-      //Boton que agrega el producto al detalle
-      $('#btnConfirmarAgregarProducto').click(function() {
-        RecolectarDatosFormulario();
-        $("#ModalProducto").modal('hide');
-        if ($("#Cantidad").val() == "") { //Controlamos que no esté vacío la cantidad de productos
-          alert('no puede estar vacío la cantidad de productos.');
-          return;
-        }
-        EnviarInformacionProducto("agregar");
-      });
+/*Data for the table `facturas` */
 
-      //Boton terminar factura
-      $('#btnTerminarFactura').click(function() {
-        $("#ModalFinFactura").modal();
-      });
+LOCK TABLES `facturas` WRITE;
 
-      //Boton confirmar factura
-      $('#btnConfirmarFactura').click(function() {
-        if ($('#CodigoCliente').val() == 0) {
-          alert('Debe seleccionar un cliente');
-          return;
-        }
-        RecolectarDatosCliente();
-        EnviarInformacionFactura("confirmarfactura");
-      });
+UNLOCK TABLES;
 
-      //Boton que descarta la factura generada borrando tanto en la tabla de facturas como detallefactura
-      $('#btnConfirmarDescartarFactura').click(function() {
-        RecolectarDatosCliente();
-        EnviarInformacionFactura("confirmardescartarfactura");
-      });
+/*Table structure for table `productos` */
 
-      //Boton confirmar factura y ademas genera pdf
-      $('#btnConfirmarImprimirFactura').click(function() {
-        if ($('#CodigoCliente').val() == 0) {
-          alert('Debe seleccionar un cliente');
-          return;
-        }
-        RecolectarDatosCliente();
-        EnviarInformacionFacturaImprimir("confirmarfactura");
-      });
+DROP TABLE IF EXISTS `productos`;
 
-      function RecolectarDatosFormulario() {
-        producto = {
-          codigoproducto: $('#CodigoProducto').val(),
-          cantidad: $('#Cantidad').val()
-        };
-      }
+CREATE TABLE `productos` (
+  `codigo` int(11) NOT NULL AUTO_INCREMENT,
+  `descripcion` varchar(50) DEFAULT NULL,
+  `precio` float DEFAULT NULL,
+  `codigocategoria` int(11) DEFAULT NULL,
+  `bodega` int(11) DEFAULT NULL,
+  `proveedor` int(20) DEFAULT NULL,
+  PRIMARY KEY (`codigo`),
+  KEY `fk_categoria` (`codigocategoria`),
+  KEY `fk_bodeg` (`bodega`),
+  KEY `fk_proveedor` (`proveedor`),
+  CONSTRAINT `fk_bodeg` FOREIGN KEY (`bodega`) REFERENCES `bodega` (`id_bodega`),
+  CONSTRAINT `fk_categoria` FOREIGN KEY (`codigocategoria`) REFERENCES `categorias` (`codigo`),
+  CONSTRAINT `fk_proveedor` FOREIGN KEY (`proveedor`) REFERENCES `proveedor` (`id_prov`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
 
-      function RecolectarDatosCliente() {
-        cliente = {
-          codigocliente: $('#CodigoCliente').val(),
-          fecha: $('#Fecha').val()
-        };
-      }
+/*Data for the table `productos` */
 
-      //Funciones AJAX para enviar y recuperar datos del servidor
-      //******************************************************* 
-      function EnviarInformacionProducto(accion) {
-        $.ajax({
-          type: 'POST',
-          url: 'procesar.php?accion=' + accion + '&codigofactura=' + <?php echo $codigofactura ?>,
-          data: producto,
-          success: function(msg) {
-            RecuperarDetalle();
-          },
-          error: function() {
-            alert("Hay un error ..");
-          }
-        });
-      }
+LOCK TABLES `productos` WRITE;
 
-      function EnviarInformacionFactura(accion) {
-        $.ajax({
-          type: 'POST',
-          url: 'procesar.php?accion=' + accion + '&codigofactura=' + <?php echo $codigofactura ?>,
-          data: cliente,
-          success: function(msg) {
-            window.location = 'index.php';
-          },
-          error: function() {
-            alert("Hay un error ..");
-          }
-        });
-      }
+UNLOCK TABLES;
 
-      function EnviarInformacionFacturaImprimir(accion) {
-        $.ajax({
-          type: 'POST',
-          url: 'procesar.php?accion=' + accion + '&codigofactura=' + <?php echo $codigofactura ?>,
-          data: cliente,
-          success: function(msg) {
-            window.open('pdffactura.php?' + '&codigofactura=' + <?php echo $codigofactura ?>, '_blank');
-            window.location = 'index.php';
-          },
-          error: function() {
-            alert("Hay un error ..");
-          }
-        });
-      }
+/*Table structure for table `proveedor` */
 
-      function LimpiarFormulario() {
-        $('#Cantidad').val('');
-      }
+DROP TABLE IF EXISTS `proveedor`;
 
-    });
+CREATE TABLE `proveedor` (
+  `id_prov` int(50) NOT NULL,
+  `numdoc_prov` char(20) DEFAULT NULL,
+  `nombres_prov` char(30) DEFAULT NULL,
+  `apellidos_prov` char(30) DEFAULT NULL,
+  `nom_comercial_prov` char(30) DEFAULT NULL,
+  `ciudad_prov` char(30) DEFAULT NULL,
+  `telefono_prov` char(15) DEFAULT NULL,
+  PRIMARY KEY (`id_prov`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-    //Se ejecuta cuando se presiona un boton de borrar un item del detalle
-    var cod;
+/*Data for the table `proveedor` */
 
-    function borrarItem(coddetalle) {
-      cod = coddetalle;
-      $("#ModalConfirmarBorrar").modal();
-    }
+LOCK TABLES `proveedor` WRITE;
 
-    $('#btnConfirmarBorrado').click(function() {
-      $("#ModalConfirmarBorrar").modal('hide');
-      $.ajax({
-        type: 'POST',
-        url: 'borrarproductodetalle.php?codigo=' + cod,
-        success: function(msg) {
-          RecuperarDetalle();
-        },
-        error: function() {
-          alert("Hay un error ..");
-        }
-      });
-    });
+UNLOCK TABLES;
 
-    function RecuperarDetalle() {
-      $.ajax({
-        type: 'GET',
-        url: 'recuperardetalle.php?codigofactura=' + <?php echo $codigofactura ?>,
-        success: function(datos) {
-          document.getElementById('DetalleFactura').innerHTML = datos;
-        },
-        error: function() {
-          alert("Hay un error ..");
-        }
+/*Table structure for table `sucursales` */
 
-      });
+DROP TABLE IF EXISTS `sucursales`;
 
-    }
-  </script>
-</body>
+CREATE TABLE `sucursales` (
+  `id_sucursal` int(11) NOT NULL AUTO_INCREMENT,
+  `nit_sucursal` char(20) NOT NULL,
+  `nombre_sucursal` char(30) DEFAULT NULL,
+  `direccion_sucursal` char(30) DEFAULT NULL,
+  `numero_factura` int(20) DEFAULT NULL,
+  `cod_bodeg` int(20) DEFAULT NULL,
+  PRIMARY KEY (`id_sucursal`,`nit_sucursal`),
+  KEY `fk_num_factu` (`numero_factura`),
+  KEY `fk_cod_bodeg` (`cod_bodeg`),
+  CONSTRAINT `fk_cod_bodeg` FOREIGN KEY (`cod_bodeg`) REFERENCES `bodega` (`id_bodega`),
+  CONSTRAINT `fk_num_factu` FOREIGN KEY (`numero_factura`) REFERENCES `facturas` (`codigo`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
 
-</html>
+/*Data for the table `sucursales` */
+
+LOCK TABLES `sucursales` WRITE;
+
+UNLOCK TABLES;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
